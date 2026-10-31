@@ -18,9 +18,9 @@ const xml = value => String(value).replaceAll('&', '&amp;').replaceAll('<', '&lt
 const background = `<rect width="900" height="900" fill="#fff"/><ellipse cx="450" cy="776" rx="242" ry="28" fill="#d5dce2" opacity=".7"/><ellipse cx="450" cy="776" rx="190" ry="18" fill="#edf0f3"/>`;
 const defs = `<defs>
   <linearGradient id="glass" x2="1"><stop stop-color="#d8e1e6" stop-opacity=".78"/><stop offset=".16" stop-color="#fff" stop-opacity=".92"/><stop offset=".38" stop-color="#dbe4e8" stop-opacity=".36"/><stop offset=".55" stop-color="#fff" stop-opacity=".92"/><stop offset=".82" stop-color="#b9c8cf" stop-opacity=".42"/><stop offset="1" stop-color="#fff" stop-opacity=".88"/></linearGradient>
-  <linearGradient id="blueCap" x2="0" y2="1"><stop stop-color="#4e91e0"/><stop offset=".42" stop-color="#246bbd"/><stop offset="1" stop-color="#124984"/></linearGradient>
+  <linearGradient id="redCap" x2="0" y2="1"><stop stop-color="#f05a65"/><stop offset=".38" stop-color="#d93649"/><stop offset="1" stop-color="#a91f35"/></linearGradient>
   <linearGradient id="silver" x2="1"><stop stop-color="#7e8990"/><stop offset=".18" stop-color="#f9fbfc"/><stop offset=".48" stop-color="#adb7bd"/><stop offset=".72" stop-color="#fff"/><stop offset="1" stop-color="#727e85"/></linearGradient>
-  <linearGradient id="label" x2="0" y2="1"><stop stop-color="#0b2235"/><stop offset="1" stop-color="#071725"/></linearGradient>
+  <linearGradient id="label" x2="1"><stop stop-color="#fff"/><stop offset=".55" stop-color="#fbfbfa"/><stop offset="1" stop-color="#e9e8e6"/></linearGradient>
   <linearGradient id="powder" x2="0" y2="1"><stop stop-color="#fff"/><stop offset="1" stop-color="#dfe5e8"/></linearGradient>
   <filter id="shadow" x="-40%" y="-60%" width="180%" height="220%"><feGaussianBlur stdDeviation="12"/></filter>
 </defs>`;
@@ -39,24 +39,39 @@ function wrap(text, max = 15, maxLines = 3) {
   return lines.slice(0, maxLines);
 }
 
+function labelName(name) {
+  return String(name)
+    .replace(/^Le Peptide\s+/i, '')
+    .replace(/ Derma Cooper Yüz Bakım Kremi$/i, '')
+    .replace(/ Derma Cooper Yüz Serumu$/i, '')
+    .replace(/ Pept Scalp Saç Toniği$/i, '')
+    .replace(/ Saç Serumu$/i, '')
+    .replace(/ Nasal Sprey$/i, '')
+    .replace(/ Topikal (Krem|Serum)$/i, '')
+    .replace(/ (Serum|Sprey)$/i, '')
+    .replace(/\s*\(Human\)/i, '')
+    .replace(/^AOD9604$/i, 'AOD-9604')
+    .replace(/^ARA290/i, 'ARA-290');
+}
+
 function label(name, size, x, y, w, h, small = false, cosmetic = false) {
-  const lines = wrap(name.replace(/[|]/g, ' ').toLocaleUpperCase('tr-TR'), small ? 12 : 15, 3);
+  const lines = wrap(labelName(name).replace(/[|]/g, ' ').toLocaleUpperCase('tr-TR'), small ? 12 : 15, 3);
   const amount = size.split('·')[0].trim().toLocaleUpperCase('tr-TR');
   const nameStart = y + (small ? 91 : 105);
   const nameFont = small ? 16 : 20;
   const amountY = y + h - 56;
-  const lineText = lines.map((line, i) => `<text x="${x + w / 2}" y="${nameStart + i * (small ? 23 : 26)}" text-anchor="middle" fill="#f7fbff" font-family="Arial,sans-serif" font-size="${nameFont}" font-weight="800" letter-spacing=".2">${xml(line)}</text>`).join('');
+  const lineText = lines.map((line, i) => `<text x="${x + w / 2}" y="${nameStart + i * (small ? 23 : 26)}" text-anchor="middle" fill="#22282b" font-family="Arial,sans-serif" font-size="${nameFont}" font-weight="700" letter-spacing=".2">${xml(line)}</text>`).join('');
   const useNote = cosmetic ? 'COSMETIC CARE' : 'RESEARCH USE ONLY';
   return `<g>
-    <rect x="${x}" y="${y}" width="${w}" height="${h}" rx="7" fill="url(#label)" stroke="#1eb9df" stroke-width="5"/>
-    <circle cx="${x + 31}" cy="${y + 31}" r="15" fill="none" stroke="#34c3e4" stroke-width="2"/>
-    <text x="${x + 31}" y="${y + 36}" text-anchor="middle" fill="#62d9f3" font-family="Arial,sans-serif" font-size="11" font-weight="800">LL</text>
-    <text x="${x + w / 2 + 22}" y="${y + 29}" text-anchor="middle" fill="#eef5fa" font-family="Arial,sans-serif" font-size="${small ? 10 : 12}" font-weight="800" letter-spacing="1.4">LONGEVITY LABS</text>
-    <path d="M${x + 18} ${y + 52}h${w - 36}" stroke="#21b9dc" stroke-opacity=".78"/>
+    <rect x="${x}" y="${y}" width="${w}" height="${h}" rx="7" fill="url(#label)" stroke="#d9d8d5" stroke-width="2"/>
+    <circle cx="${x + 31}" cy="${y + 31}" r="15" fill="none" stroke="#c63145" stroke-width="2"/>
+    <text x="${x + 31}" y="${y + 36}" text-anchor="middle" fill="#b72d40" font-family="Arial,sans-serif" font-size="11" font-weight="800">LL</text>
+    <text x="${x + w / 2 + 22}" y="${y + 29}" text-anchor="middle" fill="#9f293b" font-family="Arial,sans-serif" font-size="${small ? 10 : 12}" font-weight="800" letter-spacing="1.4">LONGEVITY LABS</text>
+    <path d="M${x + 18} ${y + 52}h${w - 36}" stroke="#d4c8c4" stroke-opacity=".95"/>
     ${lineText}
-    <rect x="${x + 22}" y="${amountY}" width="${w - 44}" height="32" rx="5" fill="#16afd4"/>
+    <rect x="${x + 22}" y="${amountY}" width="${w - 44}" height="32" rx="3" fill="#d93649"/>
     <text x="${x + w / 2}" y="${amountY + 22}" text-anchor="middle" fill="#fff" font-family="Arial,sans-serif" font-size="${small ? 16 : 19}" font-weight="800">${xml(amount)}</text>
-    <text x="${x + w / 2}" y="${y + h - 13}" text-anchor="middle" fill="#c4d0d8" font-family="Arial,sans-serif" font-size="${small ? 8 : 9}" font-weight="700" letter-spacing="1.1">${useNote}</text>
+    <text x="${x + w / 2}" y="${y + h - 13}" text-anchor="middle" fill="#636a6b" font-family="Arial,sans-serif" font-size="${small ? 8 : 9}" font-weight="700" letter-spacing="1.1">${useNote}</text>
   </g>`;
 }
 
@@ -68,9 +83,9 @@ function vial(name, size, index) {
     <circle cx="380" cy="688" r="3" fill="#e5e9eb"/><circle cx="407" cy="698" r="2.5" fill="#e5e9eb"/><circle cx="522" cy="691" r="3" fill="#e3e8eb"/>
     <rect x="354" y="230" width="192" height="84" rx="10" fill="url(#silver)" stroke="#87939a" stroke-width="3"/>
     <path d="M366 253h168M366 267h168M366 281h168" stroke="#fff" stroke-opacity=".55" stroke-width="3"/>
-    <rect x="328" y="151" width="244" height="88" rx="25" fill="url(#blueCap)" stroke="#164f8b" stroke-width="4"/>
-    <path d="M345 169Q450 143 555 169" fill="none" stroke="#b9dcff" stroke-width="8" stroke-linecap="round" opacity=".74"/>
-    <g stroke="#9dc7ef" stroke-opacity=".2" stroke-width="2"><path d="M350 160v72M370 156v78M393 153v82M417 152v84M441 151v85M465 151v85M489 152v84M513 153v82M536 156v78M550 160v72"/></g>
+    <rect x="328" y="151" width="244" height="88" rx="25" fill="url(#redCap)" stroke="#a52137" stroke-width="4"/>
+    <path d="M345 169Q450 143 555 169" fill="none" stroke="#ffd9dc" stroke-width="8" stroke-linecap="round" opacity=".74"/>
+    <g stroke="#ffd9dc" stroke-opacity=".22" stroke-width="2"><path d="M350 160v72M370 156v78M393 153v82M417 152v84M441 151v85M465 151v85M489 152v84M513 153v82M536 156v78M550 160v72"/></g>
     <rect x="328" y="287" width="244" height="430" rx="62" fill="url(#glass)" stroke="#87979f" stroke-width="4"/>
     <rect x="338" y="300" width="224" height="406" rx="52" fill="url(#glass)" opacity=".28"/>
     <path d="M349 330Q338 493 350 666" fill="none" stroke="#fff" stroke-width="12" stroke-linecap="round" opacity=".82"/>
@@ -89,7 +104,7 @@ function spray(name, size) {
     <rect x="363" y="346" width="174" height="370" rx="42" fill="url(#glass)" stroke="#8d9ba2" stroke-width="4"/>
     <path d="M383 386v250" stroke="#fff" stroke-width="9" stroke-linecap="round" opacity=".74"/>
     <rect x="379" y="313" width="142" height="68" rx="15" fill="url(#silver)" stroke="#75838b" stroke-width="3"/>
-    <rect x="405" y="274" width="90" height="50" rx="10" fill="url(#blueCap)" stroke="#164f8b" stroke-width="3"/>
+    <rect x="405" y="274" width="90" height="50" rx="10" fill="url(#redCap)" stroke="#a52137" stroke-width="3"/>
     <path d="M429 274v-47q20-16 42 0v51" fill="#f8fcff" fill-opacity=".62" stroke="#8e9ca4" stroke-width="3"/>
     ${label(name, size, 373, 398, 154, 240, true)}
   </g>`;
@@ -101,8 +116,8 @@ function jar(name, size) {
   <g>
     <rect x="280" y="402" width="340" height="290" rx="46" fill="url(#glass)" stroke="#96a3aa" stroke-width="4"/>
     <path d="M306 447v183" stroke="#fff" stroke-width="10" stroke-linecap="round" opacity=".72"/>
-    <rect x="267" y="342" width="366" height="95" rx="24" fill="url(#blueCap)" stroke="#174f87" stroke-width="4"/>
-    <path d="M294 360q154-32 312 0" fill="none" stroke="#b4d9ff" stroke-width="8" stroke-linecap="round" opacity=".65"/>
+    <rect x="267" y="342" width="366" height="95" rx="24" fill="url(#redCap)" stroke="#a52137" stroke-width="4"/>
+    <path d="M294 360q154-32 312 0" fill="none" stroke="#ffd9dc" stroke-width="8" stroke-linecap="round" opacity=".65"/>
     ${label(name, size, 315, 456, 270, 202, true, true)}
   </g>`;
 }
@@ -114,8 +129,8 @@ function serum(name, size, cosmetic = false) {
     <rect x="352" y="342" width="196" height="374" rx="43" fill="url(#glass)" stroke="#8d9ba2" stroke-width="4"/>
     <path d="M374 376v270" stroke="#fff" stroke-width="10" stroke-linecap="round" opacity=".78"/>
     <rect x="389" y="274" width="122" height="93" rx="18" fill="url(#silver)" stroke="#7f8b92" stroke-width="3"/>
-    <rect x="378" y="217" width="144" height="73" rx="21" fill="url(#blueCap)" stroke="#164f8b" stroke-width="3"/>
-    <path d="M399 230q51-20 102 0" fill="none" stroke="#b7d9fb" stroke-width="8" stroke-linecap="round" opacity=".74"/>
+    <rect x="378" y="217" width="144" height="73" rx="21" fill="url(#redCap)" stroke="#a52137" stroke-width="3"/>
+    <path d="M399 230q51-20 102 0" fill="none" stroke="#ffd9dc" stroke-width="8" stroke-linecap="round" opacity=".74"/>
     ${label(name, size, 370, 398, 160, 240, true, cosmetic)}
   </g>`;
 }
@@ -131,3 +146,4 @@ function render([name, size, research], index) {
 
 products.forEach((product, index) => writeFileSync(resolve(output, `item-${index}.svg`), render(product, index), 'utf8'));
 console.log(`Created ${products.length} branded package illustrations.`);
+
