@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="660" viewBox="0 0 960 660" fill="none" role="img" aria-labelledby="title desc">
+  <title id="title">Longevity Labs product collection</title>
+  <desc id="desc">Yellow-capped research vials with blue Longevity Labs labels, shown as a premium product illustration.</desc>
+  <defs>
+    <radialGradient id="aura"><stop stop-color="#c5a252" stop-opacity=".25"/><stop offset="1" stop-color="#c5a252" stop-opacity="0"/></radialGradient>
+    <linearGradient id="glass" x1="0" x2="1"><stop stop-color="#fff" stop-opacity=".22"/><stop offset=".18" stop-color="#dbeaf0" stop-opacity=".08"/><stop offset=".48" stop-color="#fff" stop-opacity=".31"/><stop offset=".78" stop-color="#b4c8d0" stop-opacity=".06"/><stop offset="1" stop-color="#fff" stop-opacity=".24"/></linearGradient>
+    <linearGradient id="steel" x1="0" x2="1"><stop stop-color="#606a71"/><stop offset=".23" stop-color="#f0f1ef"/><stop offset=".52" stop-color="#9ca5a8"/><stop offset=".78" stop-color="#f8f8f4"/><stop offset="1" stop-color="#59636a"/></linearGradient>
+    <linearGradient id="cap" x1="0" x2="0" y1="0" y2="1"><stop stop-color="#ffe456"/><stop offset=".45" stop-color="#edc928"/><stop offset="1" stop-color="#b9920b"/></linearGradient>
+    <linearGradient id="label" x1="0" x2="1"><stop stop-color="#102c7c"/><stop offset=".5" stop-color="#174bb0"/><stop offset="1" stop-color="#102c7c"/></linearGradient>
+    <filter id="shadow" x="-50%" y="-100%" width="200%" height="300%"><feGaussianBlur stdDeviation="16"/></filter>
+    <g id="vial">
+      <rect x="49" y="36" width="162" height="55" rx="12" fill="url(#steel)" stroke="#e8edef" stroke-opacity=".52"/>
+      <path d="M34 30Q34 12 52 12H208Q226 12 226 30V52Q226 71 208 71H52Q34 71 34 52V30Z" fill="url(#cap)" stroke="#efdb58" stroke-width="2"/>
+      <path d="M48 24Q130 8 212 24" stroke="#fff5aa" stroke-width="7" stroke-linecap="round" opacity=".72"/>
+      <rect x="46" y="84" width="168" height="294" rx="44" fill="url(#glass)" stroke="#c8d4d8" stroke-opacity=".8" stroke-width="3"/>
+      <path d="M65 115Q58 228 66 342" stroke="#fff" stroke-width="8" stroke-linecap="round" opacity=".44"/>
+      <ellipse cx="130" cy="370" rx="63" ry="8" fill="#dceaf0" opacity=".22"/>
+      <rect x="53" y="161" width="154" height="165" rx="7" fill="url(#label)" stroke="#b6d0ef" stroke-opacity=".56"/>
+      <path d="M164 161h43v165h-43q25-72 0-165Z" fill="#2c66c8" opacity=".76"/>
+      <path d="M65 177h130" stroke="#b7cee9" stroke-opacity=".52"/>
+    </g>
+  </defs>
+  <ellipse cx="490" cy="296" rx="410" ry="325" fill="url(#aura)"/>
+  <g stroke="#d3b15d" opacity=".23"><circle cx="485" cy="300" r="242"/><circle cx="485" cy="300" r="278" stroke-dasharray="2 12"/><path d="M70 475C250 360 251 225 440 169s300 114 453-43"/></g>
+  <ellipse cx="485" cy="548" rx="352" ry="44" fill="#000" opacity=".7" filter="url(#shadow)"/>
+  <ellipse cx="485" cy="538" rx="342" ry="43" fill="#182023" stroke="#a88a4c" stroke-opacity=".78"/>
+  <ellipse cx="485" cy="527" rx="292" ry="25" fill="#222b2d" stroke="#d1ae5d" stroke-opacity=".44"/>
+  <g transform="translate(105 182) scale(.72)"><use href="#vial"/><text x="130" y="197" fill="#f5f7f8" text-anchor="middle" font-family="Arial,sans-serif" font-size="15" font-weight="700" letter-spacing="1">LONGEVITY LABS</text><text x="130" y="235" fill="#fff" text-anchor="middle" font-family="Arial,sans-serif" font-size="23" font-weight="800">GHK-CU</text><text x="130" y="269" fill="#fff" text-anchor="middle" font-family="Arial,sans-serif" font-size="20" font-weight="800">50 MG</text><text x="130" y="304" fill="#dbe8ff" text-anchor="middle" font-family="Arial,sans-serif" font-size="8" letter-spacing="1">RESEARCH USE ONLY</text></g>
+  <g transform="translate(360 107) scale(1.03)"><use href="#vial"/><text x="130" y="197" fill="#f5f7f8" text-anchor="middle" font-family="Arial,sans-serif" font-size="15" font-weight="700" letter-spacing="1">LONGEVITY LABS</text><text x="130" y="235" fill="#fff" text-anchor="middle" font-family="Arial,sans-serif" font-size="20" font-weight="800">TESAMORELIN</text><text x="130" y="269" fill="#fff" text-anchor="middle" font-family="Arial,sans-serif" font-size="20" font-weight="800">10 MG</text><text x="130" y="304" fill="#dbe8ff" text-anchor="middle" font-family="Arial,sans-serif" font-size="8" letter-spacing="1">RESEARCH USE ONLY</text></g>
+  <g transform="translate(645 182) scale(.72)"><use href="#vial"/><text x="130" y="197" fill="#f5f7f8" text-anchor="middle" font-family="Arial,sans-serif" font-size="15" font-weight="700" letter-spacing="1">LONGEVITY LABS</text><text x="130" y="235" fill="#fff" text-anchor="middle" font-family="Arial,sans-serif" font-size="21" font-weight="800">BPC-157</text><text x="130" y="269" fill="#fff" text-anchor="middle" font-family="Arial,sans-serif" font-size="20" font-weight="800">5 MG</text><text x="130" y="304" fill="#dbe8ff" text-anchor="middle" font-family="Arial,sans-serif" font-size="8" letter-spacing="1">RESEARCH USE ONLY</text></g>
+  <text x="480" y="620" fill="#c7b784" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" letter-spacing="4">LONGEVITY LABS · PRODUCT COLLECTION</text>
+</svg>
