@@ -66,11 +66,11 @@ function vial(name, size, index) {
   <g>
     <path d="M350 683c21-13 36-10 51-4 15 6 27 4 41-1 19-7 34-6 49 2 15 8 32 6 59 0v23c0 8-7 14-15 14H364c-8 0-14-6-14-14z" fill="url(#powder)" stroke="#cfd8dd" stroke-width="1.5"/>
     <circle cx="380" cy="688" r="3" fill="#e5e9eb"/><circle cx="407" cy="698" r="2.5" fill="#e5e9eb"/><circle cx="522" cy="691" r="3" fill="#e3e8eb"/>
-    <rect x="354" y="239" width="192" height="75" rx="10" fill="url(#silver)" stroke="#87939a" stroke-width="3"/>
+    <rect x="354" y="230" width="192" height="84" rx="10" fill="url(#silver)" stroke="#87939a" stroke-width="3"/>
     <path d="M366 253h168M366 267h168M366 281h168" stroke="#fff" stroke-opacity=".55" stroke-width="3"/>
-    <rect x="314" y="142" width="272" height="118" rx="32" fill="url(#blueCap)" stroke="#164f8b" stroke-width="4"/>
-    <path d="M334 160Q450 129 566 160" fill="none" stroke="#b9dcff" stroke-width="10" stroke-linecap="round" opacity=".74"/>
-    <g stroke="#9dc7ef" stroke-opacity=".24" stroke-width="2"><path d="M340 153v91M359 148v101M378 145v107M402 143v110M426 142v111M450 142v111M474 142v111M498 143v110M522 145v107M546 148v101M565 153v91"/></g>
+    <rect x="328" y="151" width="244" height="88" rx="25" fill="url(#blueCap)" stroke="#164f8b" stroke-width="4"/>
+    <path d="M345 169Q450 143 555 169" fill="none" stroke="#b9dcff" stroke-width="8" stroke-linecap="round" opacity=".74"/>
+    <g stroke="#9dc7ef" stroke-opacity=".2" stroke-width="2"><path d="M350 160v72M370 156v78M393 153v82M417 152v84M441 151v85M465 151v85M489 152v84M513 153v82M536 156v78M550 160v72"/></g>
     <rect x="328" y="287" width="244" height="430" rx="62" fill="url(#glass)" stroke="#87979f" stroke-width="4"/>
     <rect x="338" y="300" width="224" height="406" rx="52" fill="url(#glass)" opacity=".28"/>
     <path d="M349 330Q338 493 350 666" fill="none" stroke="#fff" stroke-width="12" stroke-linecap="round" opacity=".82"/>

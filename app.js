@@ -13,7 +13,7 @@ var raw=[
 ["TB-500","2 mg",1500],["TB-500","5 mg",3000],["TB-500","10 mg",6000],["SS-31","10 mg",4000],["AOD9604","2 mg",2500],["AOD9604","5 mg",4000],["AOD9604","10 mg",7000]
 ];
 function cat(n){if(/tesamorelin|semaglutide|tirzepatide|retatrutide|aod9604/i.test(n))return "Metabolik araştırma";if(/wolverine|glow|klow|bpc|tb-500|ghk-cu|kpv/i.test(n))return "Peptit serileri";if(/semax|selank|dsip/i.test(n))return "Araştırma peptitleri";return "Diğer araştırma ürünleri"}
-var items=raw.map(function(x,i){return {name:x[0],size:x[1],price:x[2],cat:cat(x[0]),id:i,image:"assets/products/item-"+i+".svg?v=2"}});
+var items=raw.map(function(x,i){return {name:x[0],size:x[1],price:x[2],cat:cat(x[0]),id:i,image:"assets/products/item-"+i+".svg?v=3"}});
 var shopierProducts=[
 ["Le Peptide AHK-Cu + GHK-Cu Saç Serumu","30 ml",3000,"Cilt ve saç bakımı"],
 ["Le Peptide GHK-CU + SNAP8 Derma Cooper Yüz Serumu","30 ml",750,"Cilt ve saç bakımı"],
@@ -28,7 +28,7 @@ var shopierProducts=[
 ["GHK-CU Serum","50 / 100 mg",5000,"SYM ürünleri"],
 ["Retatrutide Serum","5 / 10 / 15 mg",10000,"SYM ürünleri"]
 ];
-items=items.concat(shopierProducts.map(function(x,i){var id=raw.length+i;return {name:x[0],size:x[1],price:x[2],cat:x[3],id:id,image:"assets/products/item-"+id+".svg?v=2"}}));
+items=items.concat(shopierProducts.map(function(x,i){var id=raw.length+i;return {name:x[0],size:x[1],price:x[2],cat:x[3],id:id,image:"assets/products/item-"+id+".svg?v=3"}}));
 var cats=["Tümü"].concat(Array.from(new Set(items.map(function(p){return p.cat})))),active="Tümü",filterBox=document.getElementById("filters");
 cats.forEach(function(name,i){var b=document.createElement("button");b.textContent=name;b.className=i?"filter":"filter active";b.onclick=function(){active=name;document.querySelectorAll(".filter").forEach(function(x){x.classList.toggle("active",x===b)});render()};filterBox.appendChild(b)});
 function render(){var q=document.getElementById("search").value.trim().toLocaleLowerCase("tr"),list=items.filter(function(p){return(active==="Tümü"||p.cat===active)&&(p.name+" "+p.size).toLocaleLowerCase("tr").indexOf(q)>=0});document.getElementById("count").textContent=list.length+" ürün";document.getElementById("empty").hidden=!!list.length;document.getElementById("products").innerHTML=list.map(function(p){var photo=p.image?'<img src="'+p.image+'" alt="'+p.name+' — Longevity Labs" loading="lazy">':'<div class="photo-placeholder"><span>∞</span><small>'+p.name+'</small></div>';return '<article class="card">'+photo+'<div class="cardtop"><small>'+p.cat+'</small><i>∞</i></div><h3>'+p.name+'</h3><p>'+p.size+'</p><div class="cardbottom"><strong>'+p.price.toLocaleString("tr-TR")+' <small>₺</small></strong><button data-id="'+p.id+'" aria-label="'+p.name+' ürününü sepete ekle">Sepete ekle +</button></div></article>'}).join("");document.querySelectorAll(".card button[data-id]").forEach(function(b){b.onclick=function(){addToCart(Number(b.dataset.id))}})}
