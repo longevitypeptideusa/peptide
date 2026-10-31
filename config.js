@@ -1,3 +1,2 @@
 // WhatsApp numarasını ülke koduyla, + ve boşluk olmadan yazın: 905XXXXXXXXX
-const WHATSAPP_NUMBER = "";
-
+const WHATSAPP_NUMBER = "905062655869";
