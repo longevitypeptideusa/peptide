@@ -10,47 +10,124 @@ const raw = new Function(`${source.slice(rawStart, rawEnd)}; return raw;`)();
 const shopStart = source.indexOf('var shopierProducts=');
 const shopEnd = source.indexOf('];', shopStart) + 1;
 const shopierProducts = new Function(`${source.slice(shopStart, shopEnd)}; return shopierProducts;`)();
-const products = raw.map(x => [x[0], x[1]]).concat(shopierProducts.map(x => [x[0], x[1]]));
+const products = raw.map(x => [x[0], x[1], true]).concat(shopierProducts.map(x => [x[0], x[1], false]));
 const output = resolve(root, 'assets/products');
 mkdirSync(output, { recursive: true });
 const xml = value => String(value).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&apos;');
 
-function render([name, size], index) {
-  const researchProduct = index < raw.length;
-  const isSpray = !researchProduct && /nasal|sprey/i.test(name);
-  const isJar = !researchProduct && /krem/i.test(name);
-  const isTopical = !researchProduct && !isSpray && /serum|krem|toniği|le peptide/i.test(name);
-  const form = isSpray ? 'NASAL SPRAY' : isJar ? 'TOPICAL CREAM' : isTopical ? 'TOPICAL SERUM' : 'RESEARCH VIAL';
-  const shortName = name.replace(/[^\p{L}\p{N}+.-]+/gu, ' ').trim().toLocaleUpperCase('tr-TR').slice(0, 25);
-  const labelWords = shortName.split(/\s+/);
-  const labelLines = [];
-  let currentLine = '';
-  for (const word of labelWords) {
-    const candidate = currentLine ? `${currentLine} ${word}` : word;
-    if (candidate.length > 12 && currentLine) { labelLines.push(currentLine); currentLine = word; }
-    else currentLine = candidate;
+const background = `<rect width="900" height="900" fill="#fff"/><ellipse cx="450" cy="776" rx="242" ry="28" fill="#d5dce2" opacity=".7"/><ellipse cx="450" cy="776" rx="190" ry="18" fill="#edf0f3"/>`;
+const defs = `<defs>
+  <linearGradient id="glass" x2="1"><stop stop-color="#d8e1e6" stop-opacity=".78"/><stop offset=".16" stop-color="#fff" stop-opacity=".92"/><stop offset=".38" stop-color="#dbe4e8" stop-opacity=".36"/><stop offset=".55" stop-color="#fff" stop-opacity=".92"/><stop offset=".82" stop-color="#b9c8cf" stop-opacity=".42"/><stop offset="1" stop-color="#fff" stop-opacity=".88"/></linearGradient>
+  <linearGradient id="blueCap" x2="0" y2="1"><stop stop-color="#4e91e0"/><stop offset=".42" stop-color="#246bbd"/><stop offset="1" stop-color="#124984"/></linearGradient>
+  <linearGradient id="silver" x2="1"><stop stop-color="#7e8990"/><stop offset=".18" stop-color="#f9fbfc"/><stop offset=".48" stop-color="#adb7bd"/><stop offset=".72" stop-color="#fff"/><stop offset="1" stop-color="#727e85"/></linearGradient>
+  <linearGradient id="label" x2="0" y2="1"><stop stop-color="#0b2235"/><stop offset="1" stop-color="#071725"/></linearGradient>
+  <linearGradient id="powder" x2="0" y2="1"><stop stop-color="#fff"/><stop offset="1" stop-color="#dfe5e8"/></linearGradient>
+  <filter id="shadow" x="-40%" y="-60%" width="180%" height="220%"><feGaussianBlur stdDeviation="12"/></filter>
+</defs>`;
+
+function wrap(text, max = 15, maxLines = 3) {
+  const words = String(text).split(/\s+/).filter(Boolean);
+  const lines = [];
+  let line = '';
+  for (const word of words) {
+    const next = line ? `${line} ${word}` : word;
+    if (next.length > max && line) { lines.push(line); line = word; }
+    else line = next;
   }
-  if (currentLine) labelLines.push(currentLine);
-  const lineOne = labelLines[0] || shortName;
-  const lineTwo = labelLines.slice(1).join(' ');
-  const labelAmount = size.split('·')[0].trim().toLocaleUpperCase('tr-TR');
-  const accent = index % 3 === 0 ? '#e0bd55' : '#c4a64d';
-  const brand = 'LONGEVITY LABS';
-  let background, packageArt;
-  if (!isSpray && !isTopical) {
-    background = `<rect width="900" height="900" fill="url(#vialBg)"/><ellipse cx="450" cy="774" rx="245" ry="38" fill="#6d8290" opacity=".22"/><circle cx="740" cy="164" r="260" fill="#fff" opacity=".34"/><path d="M70 718h760" stroke="#fff" stroke-opacity=".58"/>`;
-    packageArt = `<g><ellipse cx="450" cy="744" rx="166" ry="22" fill="#52616a" opacity=".22" filter="url(#softShadow)"/><rect x="354" y="239" width="192" height="75" rx="11" fill="url(#silver)" stroke="#88949a" stroke-width="3"/><path d="M366 252h168M366 265h168M366 278h168" stroke="#fff" stroke-opacity=".55" stroke-width="3"/><rect x="314" y="142" width="272" height="118" rx="32" fill="url(#yellowCap)" stroke="#c79e0d" stroke-width="4"/><path d="M334 160Q450 129 566 160" fill="none" stroke="#fff4a6" stroke-width="12" stroke-linecap="round" opacity=".84"/><g stroke="#b88f08" stroke-opacity=".37" stroke-width="2"><path d="M340 153v91M359 148v101M378 145v107M402 143v110M426 142v111M450 142v111M474 142v111M498 143v110M522 145v107M546 148v101M565 153v91"/></g><rect x="328" y="287" width="244" height="430" rx="62" fill="url(#vialGlass)" stroke="#91a0a7" stroke-width="4"/><rect x="338" y="300" width="224" height="406" rx="52" fill="url(#innerGlass)" opacity=".34"/><path d="M349 330Q338 493 350 666" fill="none" stroke="#fff" stroke-width="12" stroke-linecap="round" opacity=".78"/><path d="M366 316Q359 445 366 558" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity=".6"/><path d="M546 330Q557 493 545 666" fill="none" stroke="#90a1a9" stroke-width="7" stroke-linecap="round" opacity=".28"/><ellipse cx="450" cy="706" rx="101" ry="8" fill="#879aa4" opacity=".22"/><rect x="339" y="397" width="222" height="245" rx="14" fill="url(#labelBlue)" stroke="#e7f0ff" stroke-width="4"/><path d="M488 401h68v237h-68q36-90 0-237" fill="#2260c4" opacity=".9"/><path d="M493 402h60" stroke="#71a2f3" stroke-width="2" opacity=".76"/><text x="450" y="438" text-anchor="middle" fill="#fff" font-family="Arial,sans-serif" font-size="17" font-weight="800" letter-spacing="1.1">${brand}</text><path d="M367 451h166" stroke="#c8dcff" stroke-opacity=".62"/><text x="450" y="504" text-anchor="middle" fill="#fff" font-family="Arial,sans-serif" font-size="${lineOne.length > 11 ? 22 : 27}" font-weight="800" letter-spacing=".2">${xml(lineOne)}</text>${lineTwo ? `<text x="450" y="535" text-anchor="middle" fill="#fff" font-family="Arial,sans-serif" font-size="22" font-weight="800">${xml(lineTwo)}</text>` : ''}<text x="450" y="${lineTwo ? 573 : 548}" text-anchor="middle" fill="#fff" font-family="Arial,sans-serif" font-size="29" font-weight="800">${xml(labelAmount)}</text><rect x="365" y="589" width="170" height="28" rx="14" fill="#e4eaf1"/><text x="450" y="608" text-anchor="middle" fill="#39434b" font-family="Arial,sans-serif" font-size="10" font-weight="700" letter-spacing=".7">RESEARCH USE ONLY</text><g fill="#fff" opacity=".42"><path d="m515 463 18 10v20l-18 10-18-10v-20z"/><path d="m378 570 15 9v17l-15 9-15-9v-17z"/><path d="m410 578 11 7v13l-11 7-11-7v-13z"/></g><rect x="344" y="402" width="212" height="235" rx="12" fill="none" stroke="#f5f8ff" stroke-opacity=".4" stroke-width="1.4"/></g>`;
-  } else if (isSpray) {
-    background = `<rect width="900" height="900" fill="#090b0b"/><circle cx="450" cy="420" r="330" fill="none" stroke="#b08c38" stroke-width="2" opacity=".36"/><circle cx="450" cy="420" r="280" fill="none" stroke="#b08c38" stroke-width="1" stroke-dasharray="3 13" opacity=".5"/><path d="M60 640C225 520 258 323 438 280S720 378 850 206M65 680C230 560 264 363 444 320s282 98 412-72" fill="none" stroke="#ab812b" stroke-width="2" opacity=".25"/>`;
-    packageArt = `<g><ellipse cx="450" cy="752" rx="180" ry="38" fill="#000" opacity=".8"/><ellipse cx="450" cy="736" rx="160" ry="29" fill="#211a0c" stroke="#927333"/><rect x="363" y="350" width="174" height="360" rx="48" fill="url(#darkGlass)" stroke="#7e6a3b" stroke-width="4"/><path d="M386 392v250" stroke="#fff" stroke-width="7" opacity=".07"/><rect x="382" y="313" width="136" height="68" rx="15" fill="#111516" stroke="#b2924a" stroke-width="3"/><rect x="413" y="271" width="74" height="50" rx="9" fill="#161b1c" stroke="#b2924a" stroke-width="3"/><path d="M430 258v-35q20-17 40 0v48h-55" fill="#202526" stroke="#c2aa70" stroke-width="3"/><rect x="373" y="398" width="154" height="237" rx="12" fill="#080a0a" stroke="#927333" stroke-width="2"/><circle cx="450" cy="432" r="19" fill="none" stroke="${accent}" stroke-width="2"/><path d="M437 432h26M450 419v26" stroke="${accent}" stroke-width="2"/><text x="450" y="474" text-anchor="middle" fill="${accent}" font-family="Arial,sans-serif" font-size="17" font-weight="700" letter-spacing="2">${brand}</text><path d="M395 489h110" stroke="#927333"/><text x="450" y="535" text-anchor="middle" fill="#f4f1e9" font-family="Arial,sans-serif" font-size="24" font-weight="800">${xml(shortName)}</text><text x="450" y="574" text-anchor="middle" fill="${accent}" font-family="Arial,sans-serif" font-size="18" font-weight="700">${xml(size).toUpperCase()}</text><text x="450" y="609" text-anchor="middle" fill="#c2baa9" font-family="Arial,sans-serif" font-size="11" letter-spacing="2">NASAL SPRAY</text></g>`;
-  } else {
-    background = `<rect width="900" height="900" fill="#f3f0e9"/><circle cx="700" cy="195" r="240" fill="#fff" opacity=".64"/><ellipse cx="450" cy="762" rx="225" ry="34" fill="#979182" opacity=".24"/>`;
-    packageArt = isJar
-      ? `<g><rect x="290" y="390" width="320" height="280" rx="46" fill="url(#clearGlass)" stroke="#aeb1ae" stroke-width="4"/><rect x="280" y="350" width="340" height="83" rx="22" fill="url(#goldMetal)" stroke="#9b8244" stroke-width="3"/><rect x="315" y="468" width="270" height="160" rx="12" fill="#fbfaf6" stroke="#d1c9b5"/><text x="450" y="510" text-anchor="middle" fill="#927333" font-family="Arial,sans-serif" font-size="17" font-weight="700" letter-spacing="2">${brand}</text><text x="450" y="558" text-anchor="middle" fill="#1d2527" font-family="Arial,sans-serif" font-size="22" font-weight="700">${xml(shortName)}</text><text x="450" y="596" text-anchor="middle" fill="#7b7466" font-family="Arial,sans-serif" font-size="16">${xml(size)}</text></g>`
-      : `<g><rect x="360" y="302" width="180" height="384" rx="42" fill="url(#clearGlass)" stroke="#aab1b2" stroke-width="4"/><rect x="392" y="248" width="116" height="84" rx="18" fill="url(#goldMetal)" stroke="#9b8244" stroke-width="3"/><path d="M410 260q40-18 80 0" fill="none" stroke="#fff" stroke-width="7" opacity=".6"/><rect x="370" y="404" width="160" height="224" rx="12" fill="#f8f7f2" stroke="#d8d2c5"/><text x="450" y="447" text-anchor="middle" fill="#927333" font-family="Arial,sans-serif" font-size="14" font-weight="700" letter-spacing="1">${brand}</text><path d="M394 460h112" stroke="#c4a64d"/><text x="450" y="510" text-anchor="middle" fill="#1d2527" font-family="Arial,sans-serif" font-size="21" font-weight="700">${xml(shortName)}</text><text x="450" y="548" text-anchor="middle" fill="#8c7543" font-family="Arial,sans-serif" font-size="16">${form}</text><text x="450" y="589" text-anchor="middle" fill="#686e6b" font-family="Arial,sans-serif" font-size="15">${xml(size)}</text></g>`;
-  }
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="900" height="900" viewBox="0 0 900 900" role="img" aria-labelledby="title desc"><title id="title">${xml(name)} — Longevity Labs</title><desc id="desc">${xml(name)}, ${xml(size)} için özgün ürün ambalaj illüstrasyonu.</desc><defs><linearGradient id="vialBg" x2="0" y2="1"><stop stop-color="#f8fbff"/><stop offset="1" stop-color="#dce7f0"/></linearGradient><linearGradient id="silver" x2="1"><stop stop-color="#6c757b"/><stop offset=".2" stop-color="#fff"/><stop offset=".47" stop-color="#a6b0b5"/><stop offset=".74" stop-color="#f8f9f8"/><stop offset="1" stop-color="#69737a"/></linearGradient><linearGradient id="yellowCap" x2="0" y2="1"><stop stop-color="#ffe958"/><stop offset=".48" stop-color="#f3d324"/><stop offset="1" stop-color="#d7b20c"/></linearGradient><linearGradient id="vialGlass" x2="1"><stop stop-color="#fff" stop-opacity=".78"/><stop offset=".17" stop-color="#cedde4" stop-opacity=".5"/><stop offset=".43" stop-color="#fff" stop-opacity=".92"/><stop offset=".7" stop-color="#b8cbd4" stop-opacity=".48"/><stop offset="1" stop-color="#fff" stop-opacity=".8"/></linearGradient><linearGradient id="innerGlass" x2="1"><stop stop-color="#a8c1ca" stop-opacity=".2"/><stop offset=".5" stop-color="#fff" stop-opacity=".5"/><stop offset="1" stop-color="#91a9b2" stop-opacity=".28"/></linearGradient><linearGradient id="labelBlue" x2="1"><stop stop-color="#072d88"/><stop offset=".5" stop-color="#0d4bc5"/><stop offset="1" stop-color="#082e8a"/></linearGradient><linearGradient id="clearGlass" x2="1"><stop stop-color="#fff" stop-opacity=".72"/><stop offset=".22" stop-color="#d5e0e4" stop-opacity=".48"/><stop offset=".48" stop-color="#fff" stop-opacity=".86"/><stop offset=".72" stop-color="#aec0c9" stop-opacity=".4"/><stop offset="1" stop-color="#fff" stop-opacity=".72"/></linearGradient><linearGradient id="goldMetal" x2="1"><stop stop-color="#8a713d"/><stop offset=".25" stop-color="#f2d879"/><stop offset=".53" stop-color="#b18d2e"/><stop offset=".8" stop-color="#f5da77"/><stop offset="1" stop-color="#96782b"/></linearGradient><linearGradient id="darkGlass" x2="1"><stop stop-color="#080b0c"/><stop offset=".26" stop-color="#25292a"/><stop offset=".5" stop-color="#090b0b"/><stop offset=".76" stop-color="#242727"/><stop offset="1" stop-color="#080a0a"/></linearGradient><filter id="softShadow" x="-50%" y="-100%" width="200%" height="300%"><feGaussianBlur stdDeviation="14"/></filter></defs>${background}<g>${packageArt}</g>${isSpray || isTopical ? `<text x="450" y="112" text-anchor="middle" fill="${isSpray ? '#c4a64d' : '#927333'}" font-family="Arial,sans-serif" font-size="14" font-weight="700" letter-spacing="5">LONGEVITY LABS</text><text x="450" y="840" text-anchor="middle" fill="${isSpray ? '#9e8c60' : '#76736c'}" font-family="Arial,sans-serif" font-size="12" letter-spacing="3">${form} / ${String(index + 1).padStart(2, '0')}</text>` : ''}</svg>`;
+  if (line) lines.push(line);
+  if (lines.length > maxLines) lines[maxLines - 1] = `${lines[maxLines - 1].slice(0, Math.max(3, max - 1)).replace(/[+\-\s]+$/g, '')}…`;
+  return lines.slice(0, maxLines);
+}
+
+function label(name, size, x, y, w, h, small = false, cosmetic = false) {
+  const lines = wrap(name.replace(/[|]/g, ' ').toLocaleUpperCase('tr-TR'), small ? 12 : 15, 3);
+  const amount = size.split('·')[0].trim().toLocaleUpperCase('tr-TR');
+  const nameStart = y + (small ? 91 : 105);
+  const nameFont = small ? 16 : 20;
+  const amountY = y + h - 56;
+  const lineText = lines.map((line, i) => `<text x="${x + w / 2}" y="${nameStart + i * (small ? 23 : 26)}" text-anchor="middle" fill="#f7fbff" font-family="Arial,sans-serif" font-size="${nameFont}" font-weight="800" letter-spacing=".2">${xml(line)}</text>`).join('');
+  const useNote = cosmetic ? 'COSMETIC CARE' : 'RESEARCH USE ONLY';
+  return `<g>
+    <rect x="${x}" y="${y}" width="${w}" height="${h}" rx="7" fill="url(#label)" stroke="#1eb9df" stroke-width="5"/>
+    <circle cx="${x + 31}" cy="${y + 31}" r="15" fill="none" stroke="#34c3e4" stroke-width="2"/>
+    <text x="${x + 31}" y="${y + 36}" text-anchor="middle" fill="#62d9f3" font-family="Arial,sans-serif" font-size="11" font-weight="800">LL</text>
+    <text x="${x + w / 2 + 22}" y="${y + 29}" text-anchor="middle" fill="#eef5fa" font-family="Arial,sans-serif" font-size="${small ? 10 : 12}" font-weight="800" letter-spacing="1.4">LONGEVITY LABS</text>
+    <path d="M${x + 18} ${y + 52}h${w - 36}" stroke="#21b9dc" stroke-opacity=".78"/>
+    ${lineText}
+    <rect x="${x + 22}" y="${amountY}" width="${w - 44}" height="32" rx="5" fill="#16afd4"/>
+    <text x="${x + w / 2}" y="${amountY + 22}" text-anchor="middle" fill="#fff" font-family="Arial,sans-serif" font-size="${small ? 16 : 19}" font-weight="800">${xml(amount)}</text>
+    <text x="${x + w / 2}" y="${y + h - 13}" text-anchor="middle" fill="#c4d0d8" font-family="Arial,sans-serif" font-size="${small ? 8 : 9}" font-weight="700" letter-spacing="1.1">${useNote}</text>
+  </g>`;
+}
+
+function vial(name, size, index) {
+  return `${background}
+  <ellipse cx="450" cy="748" rx="168" ry="19" fill="#7d8d98" opacity=".19" filter="url(#shadow)"/>
+  <g>
+    <path d="M350 683c21-13 36-10 51-4 15 6 27 4 41-1 19-7 34-6 49 2 15 8 32 6 59 0v23c0 8-7 14-15 14H364c-8 0-14-6-14-14z" fill="url(#powder)" stroke="#cfd8dd" stroke-width="1.5"/>
+    <circle cx="380" cy="688" r="3" fill="#e5e9eb"/><circle cx="407" cy="698" r="2.5" fill="#e5e9eb"/><circle cx="522" cy="691" r="3" fill="#e3e8eb"/>
+    <rect x="354" y="239" width="192" height="75" rx="10" fill="url(#silver)" stroke="#87939a" stroke-width="3"/>
+    <path d="M366 253h168M366 267h168M366 281h168" stroke="#fff" stroke-opacity=".55" stroke-width="3"/>
+    <rect x="314" y="142" width="272" height="118" rx="32" fill="url(#blueCap)" stroke="#164f8b" stroke-width="4"/>
+    <path d="M334 160Q450 129 566 160" fill="none" stroke="#b9dcff" stroke-width="10" stroke-linecap="round" opacity=".74"/>
+    <g stroke="#9dc7ef" stroke-opacity=".24" stroke-width="2"><path d="M340 153v91M359 148v101M378 145v107M402 143v110M426 142v111M450 142v111M474 142v111M498 143v110M522 145v107M546 148v101M565 153v91"/></g>
+    <rect x="328" y="287" width="244" height="430" rx="62" fill="url(#glass)" stroke="#87979f" stroke-width="4"/>
+    <rect x="338" y="300" width="224" height="406" rx="52" fill="url(#glass)" opacity=".28"/>
+    <path d="M349 330Q338 493 350 666" fill="none" stroke="#fff" stroke-width="12" stroke-linecap="round" opacity=".82"/>
+    <path d="M366 316Q359 445 366 558" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity=".68"/>
+    <path d="M546 330Q557 493 545 666" fill="none" stroke="#71818a" stroke-width="6" stroke-linecap="round" opacity=".24"/>
+    <ellipse cx="450" cy="706" rx="101" ry="8" fill="#82929b" opacity=".2"/>
+    ${label(name, size, 339, 397, 222, 245)}
+    <rect x="344" y="402" width="212" height="235" rx="4" fill="none" stroke="#87dff0" stroke-opacity=".33"/>
+  </g>`;
+}
+
+function spray(name, size) {
+  return `${background}
+  <ellipse cx="450" cy="749" rx="154" ry="18" fill="#7d8d98" opacity=".18" filter="url(#shadow)"/>
+  <g>
+    <rect x="363" y="346" width="174" height="370" rx="42" fill="url(#glass)" stroke="#8d9ba2" stroke-width="4"/>
+    <path d="M383 386v250" stroke="#fff" stroke-width="9" stroke-linecap="round" opacity=".74"/>
+    <rect x="379" y="313" width="142" height="68" rx="15" fill="url(#silver)" stroke="#75838b" stroke-width="3"/>
+    <rect x="405" y="274" width="90" height="50" rx="10" fill="url(#blueCap)" stroke="#164f8b" stroke-width="3"/>
+    <path d="M429 274v-47q20-16 42 0v51" fill="#f8fcff" fill-opacity=".62" stroke="#8e9ca4" stroke-width="3"/>
+    ${label(name, size, 373, 398, 154, 240, true)}
+  </g>`;
+}
+
+function jar(name, size) {
+  return `${background}
+  <ellipse cx="450" cy="722" rx="226" ry="24" fill="#7d8d98" opacity=".17" filter="url(#shadow)"/>
+  <g>
+    <rect x="280" y="402" width="340" height="290" rx="46" fill="url(#glass)" stroke="#96a3aa" stroke-width="4"/>
+    <path d="M306 447v183" stroke="#fff" stroke-width="10" stroke-linecap="round" opacity=".72"/>
+    <rect x="267" y="342" width="366" height="95" rx="24" fill="url(#blueCap)" stroke="#174f87" stroke-width="4"/>
+    <path d="M294 360q154-32 312 0" fill="none" stroke="#b4d9ff" stroke-width="8" stroke-linecap="round" opacity=".65"/>
+    ${label(name, size, 315, 456, 270, 202, true, true)}
+  </g>`;
+}
+
+function serum(name, size, cosmetic = false) {
+  return `${background}
+  <ellipse cx="450" cy="749" rx="156" ry="19" fill="#7d8d98" opacity=".18" filter="url(#shadow)"/>
+  <g>
+    <rect x="352" y="342" width="196" height="374" rx="43" fill="url(#glass)" stroke="#8d9ba2" stroke-width="4"/>
+    <path d="M374 376v270" stroke="#fff" stroke-width="10" stroke-linecap="round" opacity=".78"/>
+    <rect x="389" y="274" width="122" height="93" rx="18" fill="url(#silver)" stroke="#7f8b92" stroke-width="3"/>
+    <rect x="378" y="217" width="144" height="73" rx="21" fill="url(#blueCap)" stroke="#164f8b" stroke-width="3"/>
+    <path d="M399 230q51-20 102 0" fill="none" stroke="#b7d9fb" stroke-width="8" stroke-linecap="round" opacity=".74"/>
+    ${label(name, size, 370, 398, 160, 240, true, cosmetic)}
+  </g>`;
+}
+
+function render([name, size, research], index) {
+  const isSpray = /nasal|sprey/i.test(name);
+  const isJar = /krem/i.test(name);
+  const cosmetic = /le peptide|topikal|bakım kremi|saç toniği|saç serumu|yüz serumu/i.test(name);
+  const art = isSpray ? spray(name, size) : isJar ? jar(name, size) : research ? vial(name, size, index) : serum(name, size, cosmetic);
+  const desc = `${name}, ${size} için Longevity Labs konsept ambalaj illüstrasyonu.`;
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="900" height="900" viewBox="0 0 900 900" role="img" aria-labelledby="title desc"><title id="title">${xml(name)} — Longevity Labs</title><desc id="desc">${xml(desc)}</desc>${defs}${art}</svg>`;
 }
 
 products.forEach((product, index) => writeFileSync(resolve(output, `item-${index}.svg`), render(product, index), 'utf8'));
-console.log(`Created ${products.length} unique product illustrations.`);
+console.log(`Created ${products.length} branded package illustrations.`);

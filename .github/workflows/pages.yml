@@ -26,10 +26,11 @@ jobs:
         uses: actions/configure-pages@v5
         with:
           enablement: true
+      - name: Generate branded product illustrations
+        run: node scripts/generate_product_art.mjs
       - name: Upload site
         uses: actions/upload-pages-artifact@v3
         with:
           path: "."
       - name: Deploy
         uses: actions/deploy-pages@v4
-
