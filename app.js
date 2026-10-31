@@ -36,3 +36,11 @@ function order(p){var phone=(typeof WHATSAPP_NUMBER==="string"?WHATSAPP_NUMBER:"
 document.getElementById("search").addEventListener("input",render);document.getElementById("year").textContent=new Date().getFullYear();render();
 var coas=[["50AM","50AM-20260908S6179_report.pdf"],["AOD5","AOD5-20260908S6179_report.pdf"],["BB20","BB20-20260908S6179_report.pdf"],["GLOW70","GLOW70-20260908S6179_report.pdf"],["TR30","TR30-20260908S6179_report.pdf"],["TSM5","TSM5-20260908S6179_report.pdf"]];
 document.getElementById("coa-list").innerHTML=coas.map(function(x){return '<a class="coa-row" href="'+x[1]+'" target="_blank" rel="noreferrer"><span class="pdf">PDF</span><span><b>'+x[0]+'</b><small>Analiz raporu</small></span><i>↗</i></a>'}).join("");
+
+var gate=document.getElementById("entry-gate"),siteContent=document.getElementById("site-content"),gateChecks=Array.from(gate.querySelectorAll('input[type="checkbox"]')),gateButton=document.getElementById("gate-enter");
+function updateGateButton(){gateButton.disabled=!gateChecks.every(function(input){return input.checked})}
+function closeGate(){gate.hidden=true;siteContent.inert=false;document.body.classList.remove("gate-open");document.querySelector(".brand").focus()}
+var accepted=false;try{accepted=sessionStorage.getItem("longevity-labs-entry-v1")==="accepted"}catch(error){}
+if(accepted){closeGate()}else{document.body.classList.add("gate-open");gateChecks[0].focus()}
+gateChecks.forEach(function(input){input.addEventListener("change",updateGateButton)});
+gateButton.addEventListener("click",function(){if(gateButton.disabled)return;try{sessionStorage.setItem("longevity-labs-entry-v1","accepted")}catch(error){}closeGate()});
